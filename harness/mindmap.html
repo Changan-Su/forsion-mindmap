@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>mindmap plugin harness</title>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    /* ⚠️ 必须**照抄真宿主**,不能给插件喂宿主没有的东西。真实情况(Forsion-Genesis/desktop):
+       - 挂载容器是 `.am-app.tangu-lovable.amx-pane.amx-pluginfile`,自身 background:transparent、color:var(--text);
+       - 主题变量叫 --accent/--text/--bg,**没有 --am-* 这一套**(仓内 grep 零命中)。
+       早先这里自定义了一整套 --am-*,于是插件里 `var(--am-bg,#fff)` 在 harness 里取到值、在真宿主里恒取浅色兜底
+       —— 深色测试「通过」但产品是坏的。现在只提供真宿主真有的东西,让假通过不可能再发生。 */
+    #app { height: 100%; --accent: #4C2585; background: #ffffff; color: #1a1a1a; }
+    #app.dark { background: #16181d; color: #e8e8ea; }
+    #host { height: 100%; background: transparent; }
+  </style>
+</head>
+<body>
+  <div id="app"><div id="host"></div></div>
+  <script>
+    // 宿主替身:用 new Function('ctx', main.js) 装载真插件产物,和 Amadeus 的装载方式一致。
+    window.__writes = []
+    window.__files = {}
+    let disposer = null
+    const reg = { fileType: null, embed: null, creator: null, slash: null, commands: [] }
+    window.__reg = reg
+
+    const ctx = {
+      registerFileType: (d) => { reg.fileType = d },
+      registerEmbedRenderer: (d) => { reg.embed = d },
+      registerFileCreator: (d) => { reg.creator = d },
+      registerSlashItem: (d) => { reg.slash = d },
+      registerCommand: (d) => { reg.commands.push(d) },
+      app: {
+        readFile: async (p) => (p in window.__files ? window.__files[p] : null),
+        writeFile: async (p, text) => { window.__files[p] = text; window.__writes.push({ p, text }) },
+        openFile: () => {},
+        notify: (m) => { (window.__notes ||= []).push(m) },
+      },
+    }
+
+    window.__boot = async (md) => {
+      const res = await fetch('../main.js')            // 产物在仓根,页面在 harness/ 下
+      if (!res.ok) throw new Error('main.js 取不到:' + res.status)
+      const src = await res.text()
+      new Function('ctx', src)(ctx)
+      window.__files['t.mindmap.md'] = md
+    }
+    window.__mount = () => {
+      if (disposer) { try { disposer() } catch (e) {} }
+      const host = document.getElementById('host')
+      host.innerHTML = ''
+      disposer = reg.fileType.mount(host, { filePath: 't.mindmap.md' })
+    }
+    window.__mountEmbed = (target) => {
+      if (disposer) { try { disposer() } catch (e) {} }
+      const host = document.getElementById('host')
+      host.innerHTML = ''
+      disposer = reg.embed.mount(host, { target, pagePath: 'note.md' })
+    }
+    window.__setDark = (on) => document.getElementById('app').classList.toggle('dark', on)
+
+    // 导出走 <a download>.click():这里截下来(不放行真下载),测试再 fetch 回 blob 校验字节。
+    window.__dl = []
+    const _click = HTMLAnchorElement.prototype.click
+    HTMLAnchorElement.prototype.click = function () {
+      if (this.download) { window.__dl.push({ name: this.download, url: this.href }); return }
+      return _click.call(this)
+    }
+    window.__lastDownload = async () => {
+      const d = window.__dl[window.__dl.length - 1]
+      if (!d) return null
+      const blob = await (await fetch(d.url)).blob()
+      const head = new Uint8Array(await blob.slice(0, 8).arrayBuffer())
+      return { name: d.name, type: blob.type, size: blob.size, head: Array.from(head) }
+    }
+    // 导出的图里到底有没有**看得见**的内容。
+    // ⚠️ 不能用「不透明像素占比」当判据:导出改成铺底色后每个像素都不透明,那条断言会恒真 —— 又一个假通过。
+    // 改为:以左上角像素为背景基准,统计与之明显不同的像素(=真正画上去的东西),并回报背景/内容的平均亮度,
+    // 让测试能断言「两者反差够大」= 深浅两种主题下导出都真的看得清。
+    window.__lastDownloadInk = async () => {
+      const d = window.__dl[window.__dl.length - 1]
+      if (!d) return null
+      const bmp = await createImageBitmap(await (await fetch(d.url)).blob())
+      const c = document.createElement('canvas')
+      c.width = bmp.width; c.height = bmp.height
+      const g = c.getContext('2d')
+      g.drawImage(bmp, 0, 0)
+      const px = g.getImageData(0, 0, c.width, c.height).data
+      const L = (i) => (0.2126 * px[i] + 0.7152 * px[i + 1] + 0.0722 * px[i + 2]) / 255
+      const bgLum = L(0)
+      let ink = 0, sum = 0
+      for (let i = 0; i < px.length; i += 4) {
+        if (px[i + 3] < 16) continue // 完全透明的不算内容
+        const l = L(i)
+        if (Math.abs(l - bgLum) > 0.15) { ink++; sum += l }
+      }
+      return { w: bmp.width, h: bmp.height, inkRatio: ink / (bmp.width * bmp.height), bgLum, inkLum: ink ? sum / ink : bgLum }
+    }
+    // 当前落盘内容(经防抖写入后)
+    window.__md = () => window.__files['t.mindmap.md']
+  </script>
+</body>
+</html>

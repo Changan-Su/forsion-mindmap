@@ -1,0 +1,19 @@
+{
+  "name": "forsion-plugin-mindmap",
+  "private": true,
+  "version": "1.5.0",
+  "description": "Forsion/Amadeus 思维导图插件(构建源;产物 main.js 已提交)",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node check.mjs",
+    "e2e": "node harness/mindmap.e2e.cjs",
+    "verify": "npm run build && npm run check && npm run e2e"
+  },
+  "dependencies": {
+    "markmap-lib": "^0.18.12",
+    "markmap-view": "^0.18.12"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
