@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">思维导图 — Idea branches</title>
+  <!-- Original Forsion plugin identity artwork, 2026-10-05. -->
+  <defs><linearGradient id="tile" x1="28" y1="12" x2="222" y2="252" gradientUnits="userSpaceOnUse"><stop stop-color="#34465f"/><stop offset="1" stop-color="#1e2c40"/></linearGradient></defs>
+  <rect x="4" y="4" width="248" height="248" rx="58" fill="url(#tile)"/>
+  <g style="--ink:#f0ecdf;--accent:#9ebbe2;--cut:#1e2c40" fill="none" stroke="var(--ink)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 121V65m-13 78-47 37m73-37 47 37" stroke-width="13"/>
+    <circle cx="128" cy="130" r="25" fill="var(--ink)" stroke="none"/>
+    <circle cx="128" cy="55" r="17" fill="var(--accent)" stroke="none"/>
+    <circle cx="60" cy="186" r="19" fill="var(--accent)" stroke="none"/>
+    <circle cx="196" cy="186" r="19" fill="var(--accent)" stroke="none"/>
+  </g>
+</svg>
