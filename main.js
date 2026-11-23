@@ -202,7 +202,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   white-space: nowrap;
   pointer-events: none;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--surface, var(--bg-card));
   border: 1px solid var(--border);
   font-size: 11px;
@@ -316,7 +316,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   box-sizing: border-box;
   background: var(--bg-card, var(--surface));
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 10px);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.08));
   overflow: hidden;
 }
@@ -357,7 +357,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   font-size: 11px;
   line-height: 1;
   padding: 2px 4px;
-  border-radius: var(--radius-sm, 5px);
+  border-radius: var(--radius-xs);
 }
 .mmv-folded {
   border: 1px solid var(--border);
@@ -403,7 +403,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   font-size: 12px;
   line-height: 1;
   padding: 2px 5px;
-  border-radius: var(--radius-sm, 5px);
+  border-radius: var(--radius-xs);
 }
 .mmv-node-actions button:hover {
   background: var(--bg-hover, rgba(127, 127, 127, 0.14));
@@ -445,7 +445,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   padding: 2px;
   background: var(--surface, var(--bg-card));
   border: 1px solid var(--border);
-  border-radius: var(--radius-md, 9px);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.12));
 }
 .mmv-zoom button {
@@ -456,7 +456,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   font-size: 13px;
   line-height: 1;
   padding: 5px 8px;
-  border-radius: var(--radius-sm, 7px);
+  border-radius: calc(var(--radius-md) - 2px);
   min-width: 26px;
 }
 .mmv-zoom button:hover {
@@ -513,7 +513,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   cursor: pointer;
   font-size: 12px;
   padding: 2px 6px;
-  border-radius: var(--radius-sm, 5px);
+  border-radius: var(--radius-xs);
 }
 .mmv-outline-head button:hover {
   background: var(--bg-hover, rgba(127, 127, 127, 0.14));
@@ -561,7 +561,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
 .mmv-tag {
   margin-right: 5px;
   padding: 0 4px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   background: var(--bg-hover, rgba(127, 127, 127, 0.16));
   color: var(--text-muted);
   font-size: 10px;
@@ -602,7 +602,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
 .mmv-skel i {
   display: block;
   height: 14px;
-  border-radius: 7px;
+  border-radius: var(--radius-pill);
   background: var(--hover, rgba(128, 128, 128, 0.14));
   animation: mmv-skel-pulse 1.2s ease-in-out infinite;
 }
@@ -630,7 +630,7 @@ ${s}</outline>`:`${s}<outline text="${u}"/>`}).join(`
   cursor: pointer;
   font-size: 14px;
   padding: 8px 16px;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-sm);
 }
 .mmv-empty-hint {
   font-size: 13px;
